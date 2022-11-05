@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const { PORT } = require("./config/config");
 
 // Connect to MongoDB
@@ -13,6 +14,7 @@ const { errorHandler } = require("./middlewares/errorHandler");
 const app = express();
 
 // parse information from request body
+app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
