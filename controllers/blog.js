@@ -11,7 +11,7 @@ const getAllPublishedBlogs = async (req, res, next) => {
     const authors = author ? author : "";
     const orders = order === "asc" ? 1 : -1;
     if (sortBy === "read_count") {
-      blogs = await Blog.find({ state: "draft" })
+      blogs = await Blog.find({ state: "published" })
         .find({ author: { $regex: `${authors}`, $options: "i" } })
         .find({ title: { $regex: `${titles}`, $options: "i" } })
         .find({ tags: { $regex: `${tag}`, $options: "i" } })
@@ -21,7 +21,7 @@ const getAllPublishedBlogs = async (req, res, next) => {
         .skip(page > 0 ? page * 20 : 0)
         .limit(20);
     } else if (sortBy === "reading_time") {
-      blogs = await Blog.find({ state: "draft" })
+      blogs = await Blog.find({ state: "published" })
         .find({ author: { $regex: `${authors}`, $options: "i" } })
         .find({ title: { $regex: `${titles}`, $options: "i" } })
         .find({ tags: { $regex: `${tag}`, $options: "i" } })
@@ -31,7 +31,7 @@ const getAllPublishedBlogs = async (req, res, next) => {
         .skip(page > 0 ? page * 20 : 0)
         .limit(20);
     } else if (sortBy === "createdAt") {
-      blogs = await Blog.find({ state: "draft" })
+      blogs = await Blog.find({ state: "published" })
         .find({ author: { $regex: `${authors}`, $options: "i" } })
         .find({ title: { $regex: `${titles}`, $options: "i" } })
         .find({ tags: { $regex: `${tag}`, $options: "i" } })
@@ -41,7 +41,7 @@ const getAllPublishedBlogs = async (req, res, next) => {
         .skip(page > 0 ? page * 20 : 0)
         .limit(20);
     } else {
-      blogs = await Blog.find({ state: "draft" })
+      blogs = await Blog.find({ state: "published" })
         .find({ author: { $regex: `${authors}`, $options: "i" } })
         .find({ title: { $regex: `${titles}`, $options: "i" } })
         .find({ tags: { $regex: `${tag}`, $options: "i" } })
