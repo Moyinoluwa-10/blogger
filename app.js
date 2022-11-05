@@ -8,6 +8,7 @@ require("./database/db").connectToMongoDB();
 // routes
 const user = require("./routes/user");
 const blog = require("./routes/blog");
+const { errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use("/", user);
 app.use("/api/blog", blog);
+app.use(errorHandler);
 
 // Home Route
 app.get("/", (req, res) => {

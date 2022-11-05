@@ -1,20 +1,55 @@
 const Blog = require("../models/blogModel");
-const { readingTime } = require("../middlewares/readingTime");
+const { readingTime } = require("../utils/readingTime");
 
 // get all published blogs
 const getAllPublishedBlogs = async (req, res, next) => {
   try {
-    const { page, author, title, tags } = req.query;
-    const query1 = author ? { author } : {};
-    const query2 = title ? { title } : {};
-    const query3 = tags ? { tags } : {};
-    const blogs = await Blog.find({ state: "published" })
-      .find(query1)
-      .find(query2)
-      .find(query3)
-      .populate("author", { username: 1 })
-      .skip(page > 0 ? page * 20 : 0)
-      .limit(20);
+    let blogs;
+    const { page, author, title, tags, sortBy, order } = req.query;
+    const tag = tags ? tags : "";
+    const titles = title ? title : "";
+    const authors = author ? author : "";
+    const orders = order === "asc" ? 1 : -1;
+    if (sortBy === "read_count") {
+      blogs = await Blog.find({ state: "draft" })
+        .find({ author: { $regex: `${authors}`, $options: "i" } })
+        .find({ title: { $regex: `${titles}`, $options: "i" } })
+        .find({ tags: { $regex: `${tag}`, $options: "i" } })
+        .sort({ read_count: `${orders}` })
+        .select({ title: 1 })
+        .populate("authorID", { username: 1 })
+        .skip(page > 0 ? page * 20 : 0)
+        .limit(20);
+    } else if (sortBy === "reading_time") {
+      blogs = await Blog.find({ state: "draft" })
+        .find({ author: { $regex: `${authors}`, $options: "i" } })
+        .find({ title: { $regex: `${titles}`, $options: "i" } })
+        .find({ tags: { $regex: `${tag}`, $options: "i" } })
+        .sort({ reading_time: `${orders}` })
+        .select({ title: 1 })
+        .populate("authorID", { username: 1 })
+        .skip(page > 0 ? page * 20 : 0)
+        .limit(20);
+    } else if (sortBy === "createdAt") {
+      blogs = await Blog.find({ state: "draft" })
+        .find({ author: { $regex: `${authors}`, $options: "i" } })
+        .find({ title: { $regex: `${titles}`, $options: "i" } })
+        .find({ tags: { $regex: `${tag}`, $options: "i" } })
+        .sort({ createdAt: `${orders}` })
+        .select({ title: 1 })
+        .populate("authorID", { username: 1 })
+        .skip(page > 0 ? page * 20 : 0)
+        .limit(20);
+    } else {
+      blogs = await Blog.find({ state: "draft" })
+        .find({ author: { $regex: `${authors}`, $options: "i" } })
+        .find({ title: { $regex: `${titles}`, $options: "i" } })
+        .find({ tags: { $regex: `${tag}`, $options: "i" } })
+        .select({ title: 1 })
+        .populate("authorID", { username: 1 })
+        .skip(page > 0 ? page * 20 : 0)
+        .limit(20);
+    }
 
     return res.json({
       status: true,
@@ -30,7 +65,7 @@ const getAllPublishedBlogs = async (req, res, next) => {
 const getPublishedBlog = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const blog = await Blog.findById(id).populate("author", { username: 1 });
+    const blog = await Blog.findById(id).populate("authorID", { username: 1 });
 
     if (blog.state !== "published") {
       return res.status(403).json({
@@ -56,19 +91,24 @@ const getPublishedBlog = async (req, res, next) => {
 // create a blog
 const createBlog = async (req, res, next) => {
   try {
-    // get the details from the request body
-    const { title, description, tags, body } = req.body;
+    // check if title has been used
+    const { title, body } = req.body;
+    const blog = await Blog.findOne({ title });
+    if (blog) {
+      return res.status(400).json({
+        status: false,
+        message: "Blog with this title already exists",
+      });
+    }
+
     // create a new blog
-    const newBlog = new Blog({
-      title,
-      description,
-      tags,
-      author: req.user._id,
-      body,
+    const createdBlog = await Blog.create({
+      ...req.body,
+      authorID: req.user._id,
       reading_time: readingTime(body),
+      author: `${req.user.first_name} ${req.user.last_name}`,
     });
-    // save to new blog to the database
-    const createdBlog = await newBlog.save();
+
     return res.status(201).json({
       status: true,
       data: createdBlog,
@@ -78,15 +118,16 @@ const createBlog = async (req, res, next) => {
   }
 };
 
-// get all blogs for a particular user
-const getUserBlogs = async (req, res, next) => {
+// get a list of blogs for a particular user
+const getAListOfUserBlogs = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { page, state } = req.query;
     const query = state ? { state } : {};
-    const blogs = await Blog.find({ author: id })
+    const blogs = await Blog.find({ authorID: id })
       .find(query)
-      .populate("author", { username: 1 })
+      .select({ title: 1 })
+      .populate("authorID", { username: 1 })
       .skip(page > 0 ? page * 10 : 0)
       .limit(10);
 
@@ -104,17 +145,28 @@ const getUserBlogs = async (req, res, next) => {
 const updateBlog = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const update = req.body;
-    const blog = await Blog.findById(id).populate("author", { username: 1 });
 
-    if (req.user.username !== blog.author.username) {
+    const update = req.body;
+
+    const blog = await Blog.findById(id).populate("authorID", { username: 1 });
+
+    if (!blog) {
+      return res.status(403).json({
+        status: false,
+        message: "This blog does not exist",
+      });
+    }
+
+    if (req.user.username !== blog.authorID.username) {
       return res.status(403).json({
         status: false,
         message: "You are not authorized to update this blog",
       });
     }
 
-    const updatedBlog = await Blog.findByIdAndUpdate(id, update, { new: true });
+    const updatedBlog = await Blog.findByIdAndUpdate(id, update, {
+      new: true,
+    }).populate("authorID", { username: 1 });
 
     return res.status(200).json({
       status: true,
@@ -130,9 +182,16 @@ const updateBlog = async (req, res, next) => {
 const publishBlog = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const blog = await Blog.findById(id).populate("author", { username: 1 });
+    const blog = await Blog.findById(id).populate("authorID", { username: 1 });
 
-    if (req.user.username !== blog.author.username) {
+    if (!blog) {
+      return res.status(403).json({
+        status: false,
+        message: "This blog does not exist",
+      });
+    }
+
+    if (req.user.username !== blog.authorID.username) {
       return res.status(403).json({
         status: false,
         message: "You are not authorized to publish this blog",
@@ -163,18 +222,18 @@ const publishBlog = async (req, res, next) => {
 const deleteBlog = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const blog = await Blog.findById(id).populate("author", {
+    const blog = await Blog.findById(id).populate("authorID", {
       username: 1,
     });
 
     if (!blog) {
       return res.status(404).json({
         status: false,
-        message: "Blog not found",
+        message: "This blog does not exist",
       });
     }
 
-    if (req.user.username !== blog.author.username) {
+    if (req.user.username !== blog.authorID.username) {
       return res.status(403).json({
         status: false,
         message: "You are not authorized to delete this blog",
@@ -197,7 +256,7 @@ module.exports = {
   getAllPublishedBlogs,
   getPublishedBlog,
   createBlog,
-  getUserBlogs,
+  getAListOfUserBlogs,
   updateBlog,
   publishBlog,
   deleteBlog,

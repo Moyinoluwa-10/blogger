@@ -7,20 +7,19 @@ const {
   updateBlog,
   publishBlog,
   deleteBlog,
-  getUserBlogs,
+  getAListOfUserBlogs,
 } = require("../controllers/blog");
-const { getTokenandUser } = require("../middlewares/getTokenAndUser");
+const { authenticateUser } = require("../middlewares/authenticateUser");
 
 // requests that don't require authentication
 blogRouter.get("/", getAllPublishedBlogs);
 blogRouter.get("/:id", getPublishedBlog);
-blogRouter.get("/users/:id", getUserBlogs);
 
 // requests that require authentication
-blogRouter.use(getTokenandUser);
-blogRouter.post("/", createBlog);
-blogRouter.patch("/state/:id", publishBlog);
-blogRouter.patch("/:id", updateBlog);
-blogRouter.delete("/:id", deleteBlog);
+blogRouter.get("/user/:id", authenticateUser, getAListOfUserBlogs);
+blogRouter.post("/", authenticateUser, createBlog);
+blogRouter.patch("/state/:id", authenticateUser, publishBlog);
+blogRouter.patch("/:id", authenticateUser, updateBlog);
+blogRouter.delete("/:id", authenticateUser, deleteBlog);
 
 module.exports = blogRouter;
