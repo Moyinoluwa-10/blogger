@@ -164,6 +164,11 @@ const updateBlog = async (req, res, next) => {
       });
     }
 
+    let body = req.body.body;
+    if (body) {
+      update.reading_time = readingTime(body);
+    }
+
     const updatedBlog = await Blog.findByIdAndUpdate(id, update, {
       new: true,
     }).populate("authorID", { username: 1 });
