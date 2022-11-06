@@ -53,10 +53,9 @@ const getAllPublishedBlogs = async (req, res, next) => {
 
     return res.json({
       status: true,
-      data: blogs,
+      blogs: blogs,
     });
   } catch (err) {
-    err.source = "get all published blogs controller";
     next(err);
   }
 };
@@ -80,10 +79,9 @@ const getPublishedBlog = async (req, res, next) => {
 
     return res.json({
       status: true,
-      data: blog,
+      blog: blog,
     });
   } catch (err) {
-    err.source = "get a published blog controller";
     next(err);
   }
 };
@@ -111,6 +109,7 @@ const createBlog = async (req, res, next) => {
 
     return res.status(201).json({
       status: true,
+      message: "Blog created successfully",
       data: createdBlog,
     });
   } catch (error) {
@@ -133,7 +132,7 @@ const getAListOfUserBlogs = async (req, res, next) => {
 
     return res.json({
       status: true,
-      data: blogs,
+      blogs: blogs,
     });
   } catch (err) {
     err.source = "get published blogs controller";
@@ -175,7 +174,8 @@ const updateBlog = async (req, res, next) => {
 
     return res.status(200).json({
       status: true,
-      data: updatedBlog,
+      message: "Blog updated successfully",
+      blog: updatedBlog,
     });
   } catch (err) {
     err.source = "Update blog controller";
@@ -215,7 +215,8 @@ const publishBlog = async (req, res, next) => {
 
     return res.json({
       status: true,
-      data: blog,
+      message: "Blog published successfully",
+      blog: blog,
     });
   } catch (err) {
     err.source = "Published blog controller";

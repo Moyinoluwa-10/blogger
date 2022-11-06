@@ -28,6 +28,7 @@ const createUser = async (req, res, next) => {
 
     return res.status(201).json({
       status: true,
+      message: "Signup successful",
       data: createdUser,
     });
   } catch (error) {
@@ -69,7 +70,10 @@ const loginUser = async (req, res, next) => {
       expiresIn: validityPeriod,
     });
 
-    res.json({ token });
+    res.json({
+      message: "Login successful",
+      token,
+    });
   } catch (error) {
     next(error);
   }

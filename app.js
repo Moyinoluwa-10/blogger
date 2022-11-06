@@ -1,10 +1,6 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const { PORT } = require("./config/config");
-
-// Connect to MongoDB
-require("./database/db").connectToMongoDB();
 
 // routes
 const user = require("./routes/user");
@@ -13,10 +9,14 @@ const { errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
 
-// parse information from request body
+// Connect to MongoDB
+require("./database/db").connectToMongoDB();
+
+// use cors
 app.use(cors());
+
+// parse information from request body
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use("/", user);
 app.use("/api/blog", blog);
@@ -27,6 +27,14 @@ app.get("/", (req, res) => {
   return res.status(200).send({
     message: "Welcome to your Blog",
     status: true,
+  });
+});
+
+// Undefined route
+app.get("*", (req, res) => {
+  return res.status(404).send({
+    status: false,
+    message: "Route not found",
   });
 });
 
