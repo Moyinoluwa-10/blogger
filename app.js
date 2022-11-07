@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const { PORT } = require("./config/config");
 
 // routes
 const user = require("./routes/user");
@@ -8,9 +7,6 @@ const blog = require("./routes/blog");
 const { errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
-
-// Connect to MongoDB
-require("./database/db").connectToMongoDB();
 
 // use cors
 app.use(cors());
@@ -38,7 +34,4 @@ app.get("*", (req, res) => {
   });
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on port http://localhost:${PORT}`);
-});
+module.exports = { app };

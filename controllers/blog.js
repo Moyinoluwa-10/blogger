@@ -110,7 +110,7 @@ const createBlog = async (req, res, next) => {
     return res.status(201).json({
       status: true,
       message: "Blog created successfully",
-      data: createdBlog,
+      blog: createdBlog,
     });
   } catch (error) {
     next(error);

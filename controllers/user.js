@@ -29,7 +29,7 @@ const createUser = async (req, res, next) => {
     return res.status(201).json({
       status: true,
       message: "Signup successful",
-      data: createdUser,
+      user: createdUser,
     });
   } catch (error) {
     next(error);

@@ -1,21 +1,19 @@
 {
   "name": "blogging_api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "This ia a blogging api",
+  "main": "app.js",
   "scripts": {
-    "start:dev": "nodemon app.js",
-    "start": "node app.js",
+    "start:dev": "nodemon server.js",
+    "start": "node server.js",
     "test": "jest --detectOpenHandles"
   },
   "jest": {
-    "modulePathIgnorePatterns": [
-      "books.json"
-    ],
-    "testEnvironment": "node"
+    "verbose": true,
+    "testTimeout": 50000
   },
   "keywords": [],
-  "author": "",
+  "author": "Moyinoluwa Adelowo",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",

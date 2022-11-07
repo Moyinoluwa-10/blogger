@@ -85,7 +85,7 @@ Success
 {
     status: true,
     message: 'Signup successful',
-    data: {
+    user: {
           "email": "john@example.com",
           "password": "qwerty12",
           "first_name": "john",
