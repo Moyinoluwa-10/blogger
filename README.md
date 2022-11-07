@@ -23,6 +23,9 @@ This is an API for a blogging app
 ## Base URL
 - [live site](https://bloggerrr-app.herokuapp.com/)
 
+## Postman Documentation
+- Click [here](https://documenter.getpostman.com/view/23165359/2s8YYFs4R8) to see the documentation
+
 
 ## Models
 - UserModel
