@@ -1,5 +1,5 @@
 const { PORT } = require("./config/config");
-const { app } = require("./app");
+const app = require("./app");
 
 // Connect to MongoDB
 require("./database/db").connectToMongoDB();

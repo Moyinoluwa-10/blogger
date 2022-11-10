@@ -1,7 +1,7 @@
 const supertest = require("supertest");
 const { connect } = require("./database");
 const userModel = require("../models/userModel");
-const { app } = require("../app");
+const app = require("../app");
 
 describe("Auth: Signup", () => {
   let conn;
@@ -25,9 +25,9 @@ describe("Auth: Signup", () => {
       .send({
         first_name: "John",
         last_name: "Doe",
-        email: "johndoe@gmail.com",
+        email: "johndoes@gmail.com",
         password: "password1",
-        username: "johnn",
+        username: "johns",
         country: "nigeria",
       });
 
@@ -35,8 +35,8 @@ describe("Auth: Signup", () => {
     expect(response.body).toHaveProperty("user");
     expect(response.body.user).toHaveProperty("first_name", "John");
     expect(response.body.user).toHaveProperty("last_name", "Doe");
-    expect(response.body.user).toHaveProperty("email", "johndoe@gmail.com");
-    expect(response.body.user).toHaveProperty("username", "johnn");
+    expect(response.body.user).toHaveProperty("email", "johndoes@gmail.com");
+    expect(response.body.user).toHaveProperty("username", "johns");
     expect(response.body.user).toHaveProperty("country", "nigeria");
   });
 

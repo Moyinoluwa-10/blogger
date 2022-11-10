@@ -1,6 +1,6 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
-const { errorHandler } = require("./errorHandler");
+require("dotenv").config();
 
 const authenticateUser = async (req, res, next) => {
   try {
@@ -23,6 +23,7 @@ const authenticateUser = async (req, res, next) => {
 
     // add user to request object
     req.user = user;
+
     next();
   } catch (err) {
     err.source = "jwt middleware error";

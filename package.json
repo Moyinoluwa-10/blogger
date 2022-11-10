@@ -10,7 +10,7 @@
   },
   "jest": {
     "verbose": true,
-    "testTimeout": 50000
+    "testTimeout": 10000
   },
   "keywords": [],
   "author": "Moyinoluwa Adelowo",

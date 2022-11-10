@@ -5,6 +5,7 @@ const { connect } = require("./database");
 
 describe("Blog Route", () => {
   let conn;
+  let userID;
 
   const user = {
     first_name: "John",
@@ -20,15 +21,27 @@ describe("Blog Route", () => {
     description: "Train up your children",
     body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus architecto enim cum tempore autem at, porro ad et nisi vel delectus aliquid!.",
     tags: "train father son",
+    authorID: "636960d60c23ab26bd72b219",
+    author: "John Doe",
+  };
+
+  const publishedBlog = {
+    title: "Like father like son",
+    description: "Train up your children",
+    body: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus architecto enim cum tempore autem at, porro ad et nisi vel delectus aliquid!.",
+    tags: "train father son",
+    authorID: "636960d60c23ab26bd72b219",
+    author: "John Doe",
+    state: "published",
   };
 
   beforeAll(async () => {
     conn = await connect();
 
-    const signupResponse = await supertest(app).post("/signup").send(user);
+    const signupResponse = await supertest(app).post("/api/signup").send(user);
 
     const loginResponse = await supertest(app)
-      .post("/login")
+      .post("/api/login")
       .set("content-type", "application/json")
       .send({
         email: user.email,
@@ -36,7 +49,7 @@ describe("Blog Route", () => {
       });
 
     token = loginResponse.body.token;
-    userId = loginResponse.body.user._id;
+    userID = signupResponse.body.user._id;
   });
 
   afterEach(async () => {
@@ -55,7 +68,7 @@ describe("Blog Route", () => {
       .send(blog);
 
     expect(response.status).toBe(201);
-    expect(response.body.status).toBe("true");
+    expect(response.body.status).toBe(true);
     expect(response.body.blog).toHaveProperty("title");
     expect(response.body.blog).toHaveProperty("description");
     expect(response.body.blog).toHaveProperty("body");
@@ -67,63 +80,70 @@ describe("Blog Route", () => {
     expect(response.body.blog.read_count).toBe(0);
   });
 
+  it("should get a list of blogs", async () => {
+    const blogPost = await blogModel.create(blog);
+
+    const response = await supertest(app).get("/api/blog/");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("status", true);
+    expect(response.body).toHaveProperty("blogs");
+  });
+
+  it("should get a particular published blog", async () => {
+    const blogPost = await blogModel.create(publishedBlog);
+
+    blogID = blogPost._id.toString();
+
+    const response = await supertest(app).get("/api/blog/" + blogID);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("status", true);
+    expect(response.body).toHaveProperty("blog");
+  });
+
   it("should get a list of user blogs", async () => {
-    const blog = await blogModel.create(blog);
+    const blogPost = await blogModel.create(blog);
 
-    blogId = blog._id.toString();
-
-    const response = await supertest(app).get("/api/blog/user" + blogId);
+    const response = await supertest(app).get("/api/blog/user" + userID);
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("status", "true");
     expect(response.body).toHaveProperty("blogs");
   });
 
-  it("should get a particular blog", async () => {
-    const blog = await blogModel.create(blog);
-
-    blogId = blog._id.toString();
-
-    const response = await supertest(app).get("/api/blog" + blogId);
-
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("status", "true");
-    expect(response.body).toHaveProperty("blog");
-  });
-
   it("should update blog", async () => {
-    const blog = await blogModel.create(blog);
+    const blogPost = await blogModel.create(blog);
 
-    blogId = blog._id.toString();
+    const blogID = blogPost._id.toString();
 
     const response = await supertest(app)
-      .patch("/api/blog/" + blogId)
+      .patch("/api/blog/" + blogID)
       .set("Authorization", `Bearer ${token}`)
       .set("content-type", "application/json")
-      .send({ title: "Rising sun" });
+      .send({ title: "Rising Sun" });
 
     expect(response.status).toBe(200);
-    expect(response.body.status).toBe("Post Updated");
-    expect(response.body.blog.title).toBe("Rising sun");
+    expect(response.body.status).toBe(true);
+    expect(response.body.blog.title).toBe("Rising Sun");
     expect(response.body.blog).toHaveProperty("description");
     expect(response.body.blog).toHaveProperty("body");
     expect(response.body.blog).toHaveProperty("tags");
     expect(response.body.blog).toHaveProperty("author");
-    expect(response.body.blog.read_count).toBe(1);
   });
 
   it("should publish blog", async () => {
-    const blog = await blogModel.create(blog);
+    const blogPost = await blogModel.create(blog);
 
-    blogId = blog._id.toString();
+    const blogID = blogPost._id.toString();
 
     const response = await supertest(app)
-      .patch("/api/blog/state/" + blogId)
+      .patch("/api/blog/state/" + blogID)
       .set("Authorization", `Bearer ${token}`)
       .set("content-type", "application/json");
 
     expect(response.status).toBe(200);
-    expect(response.body.status).toBe("Post Updated");
+    expect(response.body.status).toBe(true);
     expect(response.body.blog).toHaveProperty("title");
     expect(response.body.blog).toHaveProperty("description");
     expect(response.body.blog).toHaveProperty("body");
@@ -133,13 +153,17 @@ describe("Blog Route", () => {
   });
 
   it("should delete a blog", async () => {
+    const blogPost = await blogModel.create(blog);
+
+    const blogID = blogPost._id.toString();
+
     const response = await supertest(app)
-      .delete("/api/blog/" + blogId)
+      .delete("/api/blog/" + blogID)
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);
-    expect(response.body.status).toBe("true");
-    expect(response.body.message).toBe("Blog deleted succesfully");
+    expect(response.body.status).toBe(true);
+    expect(response.body.message).toBe("Blog deleted successfully");
   });
 });
 
