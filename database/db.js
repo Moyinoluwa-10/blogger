@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { MONGODB_URL } = require("../config/config");
+const logger = require("../logging/logger");
 
 function connectToMongoDB() {
   mongoose.connect(MONGODB_URL, {
@@ -8,12 +9,12 @@ function connectToMongoDB() {
   });
 
   mongoose.connection.on("connected", () => {
-    console.log("Connected to MongoDB Successfully");
+    logger.info("Connected to MongoDB Successfully");
   });
 
   mongoose.connection.on("error", (err) => {
-    console.log("An error occurred while connecting to MongoDB");
-    console.log(err);
+    logger.error("An error occurred while connecting to MongoDB");
+    logger.error(err);
   });
 }
 
