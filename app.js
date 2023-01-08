@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
 const { errorHandler } = require("./middlewares/errorHandler");
 const { limiter } = require("./middlewares/limiter");
 
@@ -16,6 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 //middelewares
+app.use(helmet());
 app.use(limiter);
 app.use(errorHandler);
 
