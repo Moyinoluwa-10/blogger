@@ -1,4 +1,5 @@
 const Blog = require("../models/blog.model");
+const User = require("../models/user.model");
 const { readingTime } = require("../utils/readingTime");
 
 // get all published blogs
@@ -66,6 +67,13 @@ const getPublishedBlog = async (req, res, next) => {
     const { id } = req.params;
     const blog = await Blog.findById(id).populate("authorID", { username: 1 });
 
+    if (!blog) {
+      return res.status(404).json({
+        status: false,
+        message: "This blog does not exist",
+      });
+    }
+
     if (blog.state !== "published") {
       return res.status(403).json({
         status: false,
@@ -123,12 +131,20 @@ const getAListOfUserBlogs = async (req, res, next) => {
     const { id } = req.params;
     const { page, state } = req.query;
     const query = state ? { state } : {};
+    const user = await User.findById(id);
     const blogs = await Blog.find({ authorID: id })
       .find(query)
       .select({ title: 1 })
       .populate("authorID", { username: 1 })
       .skip(page > 0 ? page * 10 : 0)
       .limit(10);
+
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: "This user does not exist",
+      });
+    }
 
     return res.json({
       status: true,
@@ -150,16 +166,23 @@ const updateBlog = async (req, res, next) => {
     const blog = await Blog.findById(id).populate("authorID", { username: 1 });
 
     if (!blog) {
-      return res.status(403).json({
+      return res.status(404).json({
         status: false,
         message: "This blog does not exist",
       });
     }
 
     if (req.user.username !== blog.authorID.username) {
-      return res.status(403).json({
+      return res.status(401).json({
         status: false,
         message: "You are not authorized to update this blog",
+      });
+    }
+
+    if (blog.state === "published") {
+      return res.status(403).json({
+        status: false,
+        message: "This blog has been published and cannot be updated",
       });
     }
 
@@ -190,14 +213,14 @@ const publishBlog = async (req, res, next) => {
     const blog = await Blog.findById(id).populate("authorID", { username: 1 });
 
     if (!blog) {
-      return res.status(403).json({
+      return res.status(404).json({
         status: false,
         message: "This blog does not exist",
       });
     }
 
     if (req.user.username !== blog.authorID.username) {
-      return res.status(403).json({
+      return res.status(401).json({
         status: false,
         message: "You are not authorized to publish this blog",
       });
@@ -206,7 +229,7 @@ const publishBlog = async (req, res, next) => {
     if (blog.state === "published") {
       return res.status(403).json({
         status: false,
-        message: "The blog has been published",
+        message: "This blog has been published",
       });
     }
 
@@ -240,7 +263,7 @@ const deleteBlog = async (req, res, next) => {
     }
 
     if (req.user.username !== blog.authorID.username) {
-      return res.status(403).json({
+      return res.status(401).json({
         status: false,
         message: "You are not authorized to delete this blog",
       });

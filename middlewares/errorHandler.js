@@ -15,7 +15,8 @@ const errorHandler = (error, req, res, next) => {
     });
   }
 
-  res.status(400).json({
+  res.status(error.status || 400).json({
+    status: false,
     message: error.message,
   });
 

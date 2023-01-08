@@ -15,14 +15,14 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/", user);
-app.use("/api/blog", blog);
+app.use("/api/v1/blog", blog);
 app.use(errorHandler);
 
 // Home Route
 app.get("/", (req, res) => {
   return res.status(200).send({
-    message: "Welcome to your Blog",
     status: true,
+    message: "Welcome to your Blog",
   });
 });
 
