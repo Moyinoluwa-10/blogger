@@ -1,10 +1,11 @@
 const express = require("express");
 const cors = require("cors");
+const { errorHandler } = require("./middlewares/errorHandler");
+const { limiter } = require("./middlewares/limiter");
 
 // routes
 const user = require("./routes/user.routes");
 const blog = require("./routes/blog.routes");
-const { errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
 
@@ -14,9 +15,12 @@ app.use(cors());
 // parse information from request body
 app.use(express.json());
 
+//middelewares
+app.use(limiter);
+app.use(errorHandler);
+
 app.use("/", user);
 app.use("/api/v1/blog", blog);
-app.use(errorHandler);
 
 // Home Route
 app.get("/", (req, res) => {
