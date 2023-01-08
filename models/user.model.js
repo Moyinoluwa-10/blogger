@@ -30,6 +30,10 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  blogs: {
+    type: Schema.Types.ObjectId,
+    ref: "Blogs",
+  },
 });
 
 // Before saving the user information in the database, get the plain text password, hash it, and store it.
