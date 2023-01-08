@@ -1,4 +1,4 @@
-const Blog = require("../models/blogModel");
+const Blog = require("../models/blog.model");
 const { readingTime } = require("../utils/readingTime");
 
 // get all published blogs
