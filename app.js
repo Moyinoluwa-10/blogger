@@ -2,8 +2,8 @@ const express = require("express");
 const cors = require("cors");
 
 // routes
-const user = require("./routes/user");
-const blog = require("./routes/blog");
+const user = require("./routes/user.routes");
+const blog = require("./routes/blog.routes");
 const { errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();

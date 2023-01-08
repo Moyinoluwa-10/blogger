@@ -8,7 +8,7 @@ const {
   publishBlog,
   deleteBlog,
   getAListOfUserBlogs,
-} = require("../controllers/blog");
+} = require("../controllers/blog.controller");
 const { authenticateUser } = require("../middlewares/authenticateUser");
 
 // requests that don't require authentication
