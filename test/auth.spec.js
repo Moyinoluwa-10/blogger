@@ -1,26 +1,16 @@
-const supertest = require("supertest");
-const { connect } = require("./database");
-const userModel = require("../models/userModel");
 const app = require("../app");
+const supertest = require("supertest");
+const { connect, cleanup, disconnect } = require("./database");
+const userModel = require("../models/user.model");
 
-describe("Auth: Signup", () => {
-  let conn;
-
-  beforeAll(async () => {
-    conn = await connect();
-  });
-
-  afterEach(async () => {
-    await conn.cleanup();
-  });
-
-  afterAll(async () => {
-    await conn.disconnect();
-  });
+describe("Auth/User Routes", () => {
+  beforeAll(() => connect());
+  afterEach(() => cleanup());
+  afterAll(() => disconnect());
 
   it("should signup a user", async () => {
     const response = await supertest(app)
-      .post("/api/signup")
+      .post("/signup")
       .set("content-type", "application/json")
       .send({
         first_name: "John",
@@ -53,7 +43,7 @@ describe("Auth: Signup", () => {
 
     // login user
     const response = await supertest(app)
-      .post("/api/login")
+      .post("/login")
       .set("content-type", "application/json")
       .send({
         email: "johndoe@gmail.com",
