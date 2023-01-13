@@ -2,7 +2,7 @@
 
 require("dotenv").config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 4000;
 const JWT_SECRET = process.env.JWT_SECRET;
 const MONGODB_URL =
   process.env.NODE_ENV === "test"
