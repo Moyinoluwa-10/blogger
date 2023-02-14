@@ -3,7 +3,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const { errorHandler } = require("./middlewares/errorHandler");
 const { limiter } = require("./middlewares/limiter");
-const httpLogger = require("./logging/httpLogger");
+// const httpLogger = require("./logging/httpLogger");
 
 // routes
 const user = require("./routes/user.routes");
@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(helmet());
 app.use(limiter);
 app.use(errorHandler);
-app.use(httpLogger);
+// app.use(httpLogger);
 
 app.use("/", user);
 app.use("/api/v1/blog", blog);
