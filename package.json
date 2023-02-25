@@ -16,6 +16,9 @@
   "author": "Moyinoluwa Adelowo",
   "license": "ISC",
   "dependencies": {
+    "@sentry/node": "^7.37.2",
+    "@sentry/tracing": "^7.37.2",
+    "@serverless/cloud": "^2.11.8",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",

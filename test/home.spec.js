@@ -1,9 +1,9 @@
 const app = require("../app");
-const request = require("supertest");
+const supertest = require("supertest");
 
 describe("Home Route", () => {
-  it("Should return status true and a message", async () => {
-    const response = await request(app)
+  it("should return status true and a message", async () => {
+    const response = await supertest(app)
       .get("/")
       .set("content-type", "application/json");
     expect(response.status).toBe(200);
@@ -13,8 +13,8 @@ describe("Home Route", () => {
     });
   });
 
-  it("Should return error when routed to undefined route", async () => {
-    const response = await request(app)
+  it("should return error when routed to undefined route", async () => {
+    const response = await supertest(app)
       .get("/undefined")
       .set("content-type", "application/json");
     expect(response.status).toBe(404);

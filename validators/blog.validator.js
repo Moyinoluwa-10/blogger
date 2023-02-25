@@ -5,6 +5,7 @@ const blogAddSchema = Joi.object({
   description: Joi.string().max(255).optional().trim(),
   body: Joi.string().max(255).required().trim(),
   tags: Joi.string().max(255).optional().trim(),
+  state: Joi.string().max(255).optional().trim(),
 });
 
 const updateBlogSchema = Joi.object({

@@ -1,5 +1,5 @@
-const app = require("../app");
 const supertest = require("supertest");
+const app = require("../app");
 
 test("requests to unknown endpoints should return a response with status code of 404", async () => {
   await supertest(app).get("/undefined/undefined").expect(404);

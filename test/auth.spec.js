@@ -1,7 +1,7 @@
-const app = require("../app");
 const supertest = require("supertest");
-const { connect, cleanup, disconnect } = require("./database");
+const app = require("../app");
 const userModel = require("../models/user.model");
+const { connect, cleanup, disconnect } = require("./database");
 
 describe("Auth/User Routes", () => {
   beforeAll(() => connect());
