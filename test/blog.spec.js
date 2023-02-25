@@ -46,7 +46,7 @@ describe("Blog Route", () => {
   beforeAll(() => connect());
 
   beforeEach(async () => {
-    let signupResponse = await supertest(app).post("/signup").send(user);
+    const signupResponse = await supertest(app).post("/signup").send(user);
 
     userID = signupResponse.body.user._id;
 
