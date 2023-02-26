@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const PORT = process.env.PORT || 4000;
 const JWT_SECRET = process.env.JWT_SECRET;
+const EXPIRY_TIME = process.env.EXPIRY_TIME;
 const DSN = process.env.DSN;
 const MONGODB_URL =
   process.env.NODE_ENV === "test"
@@ -14,5 +15,6 @@ module.exports = {
   PORT,
   MONGODB_URL,
   JWT_SECRET,
+  EXPIRY_TIME,
   DSN,
 };

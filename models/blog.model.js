@@ -20,11 +20,13 @@ const BlogSchema = new Schema(
       type: String,
       required: true,
     },
-    authorID: {
-      type: Schema.Types.ObjectId,
-      ref: "Users",
-      required: true,
-    },
+    authorID: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Users",
+        required: true,
+      },
+    ],
     state: {
       type: String,
       default: "draft",

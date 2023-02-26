@@ -7,6 +7,7 @@ const userAddSchema = Joi.object({
   email: Joi.string().max(255).required().trim(),
   password: Joi.string().max(255).required().trim(),
   country: Joi.string().max(255).required().trim(),
+  role: Joi.string().max(255).optional().trim(),
 });
 
 async function addUserValidationMW(req, res, next) {

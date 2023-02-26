@@ -57,6 +57,7 @@ const getAllPublishedBlogs = async (req, res, next) => {
       blogs: blogs,
     });
   } catch (err) {
+    err.source = "get all published blogs";
     next(err);
   }
 };
@@ -115,13 +116,18 @@ const createBlog = async (req, res, next) => {
       author: `${req.user.first_name} ${req.user.last_name}`,
     });
 
+    const user = await User.findOne({ _id: req.user.id });
+    await user.updateOne({ $push: { blogs: createdBlog._id } });
+    await user.save();
+
     return res.status(201).json({
       status: true,
       message: "Blog created successfully",
       blog: createdBlog,
     });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    err.source = "create blog conroller";
+    next(err);
   }
 };
 
@@ -132,12 +138,6 @@ const getAListOfUserBlogs = async (req, res, next) => {
     const { page, state } = req.query;
     const query = state ? { state } : {};
     const user = await User.findById(id);
-    const blogs = await Blog.find({ authorID: id })
-      .find(query)
-      .select({ title: 1 })
-      .populate("authorID", { username: 1 })
-      .skip(page > 0 ? page * 10 : 0)
-      .limit(10);
 
     if (!user) {
       return res.status(404).json({
@@ -146,12 +146,25 @@ const getAListOfUserBlogs = async (req, res, next) => {
       });
     }
 
+    if (req.user.id !== user.id) {
+      return res.status(401).json({
+        status: false,
+        message: "You are not authorized to get this user's blog",
+      });
+    }
+
+    const blogs = await Blog.find({ authorID: id })
+      .find(query)
+      .populate("authorID", { username: 1 })
+      .skip(page > 0 ? page * 10 : 0)
+      .limit(10);
+
     return res.json({
       status: true,
       blogs: blogs,
     });
   } catch (err) {
-    err.source = "get published blogs controller";
+    err.source = "get user blogs controller";
     next(err);
   }
 };
@@ -172,17 +185,10 @@ const updateBlog = async (req, res, next) => {
       });
     }
 
-    if (req.user.username !== blog.authorID.username) {
+    if (req.user.id !== blog.authorID.id) {
       return res.status(401).json({
         status: false,
         message: "You are not authorized to update this blog",
-      });
-    }
-
-    if (blog.state === "published") {
-      return res.status(403).json({
-        status: false,
-        message: "This blog has been published and cannot be updated",
       });
     }
 
@@ -219,7 +225,7 @@ const publishBlog = async (req, res, next) => {
       });
     }
 
-    if (req.user.username !== blog.authorID.username) {
+    if (req.user.id !== blog.authorID.id) {
       return res.status(401).json({
         status: false,
         message: "You are not authorized to publish this blog",
@@ -242,7 +248,7 @@ const publishBlog = async (req, res, next) => {
       blog: blog,
     });
   } catch (err) {
-    err.source = "Published blog controller";
+    err.source = "Publish blog controller";
     next(err);
   }
 };
@@ -262,7 +268,7 @@ const deleteBlog = async (req, res, next) => {
       });
     }
 
-    if (req.user.username !== blog.authorID.username) {
+    if (req.user.id !== blog.authorID.id) {
       return res.status(401).json({
         status: false,
         message: "You are not authorized to delete this blog",

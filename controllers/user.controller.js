@@ -1,85 +1,44 @@
 const User = require("../models/user.model");
-const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../config/config");
 
-const createUser = async (req, res, next) => {
+const getAllUsers = async (req, res, next) => {
   try {
-    const body = req.body;
-    const { email, username } = body;
+    const user = await User.find().select({ password: false });
 
-    // check if user already exists
-    const user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({
-        status: false,
-        message: "User with this email already exists",
-      });
-    }
-
-    const user2 = await User.findOne({ username });
-    if (user2) {
-      return res.status(400).json({
-        status: false,
-        message: "User with this username already exists",
-      });
-    }
-
-    const createdUser = await User.create(body);
-
-    return res.status(201).json({
+    return res.json({
       status: true,
-      message: "Signup successful",
-      user: createdUser,
+      user,
     });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    err.source = "get all users controller";
+    next(err);
   }
 };
 
-const loginUser = async (req, res, next) => {
+const getUser = async (req, res, next) => {
   try {
-    // get the email and password from the request body
-    const { email, password } = req.body;
-    // check database for user
-    const user = await User.findOne({ email });
+    const { id } = req.params;
+    const user = await User.findById(id)
+      .select({ password: false })
+      .populate("blogs");
+
     if (!user) {
-      return res.status(401).json({
+      return res.status(404).json({
         status: false,
-        message: "email or password is incorrect",
-      });
-    }
-    const passwordIsValid = await user.isValidPassword(password);
-
-    if (!passwordIsValid) {
-      return res.status(401).json({
-        status: false,
-        message: "email or password is incorrect",
+        message: "This user does not exist",
       });
     }
 
-    const body = {
-      username: user.email,
-      id: user._id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-    };
-
-    const validityPeriod = "1h";
-
-    const token = jwt.sign(body, JWT_SECRET, {
-      expiresIn: validityPeriod,
+    return res.json({
+      status: true,
+      user,
     });
-
-    res.json({
-      message: "Login successful",
-      token,
-    });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    err.source = "get user controller";
+    next(err);
   }
 };
 
 module.exports = {
-  createUser,
-  loginUser,
+  getAllUsers,
+  getUser,
 };

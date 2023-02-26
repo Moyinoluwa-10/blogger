@@ -7,6 +7,7 @@ const { limiter } = require("./middlewares/limiter");
 const Sentry = require("./sentry");
 
 // routes
+const auth = require("./routes/auth.routes");
 const user = require("./routes/user.routes");
 const blog = require("./routes/blog.routes");
 
@@ -42,8 +43,9 @@ app.use(helmet());
 app.use(limiter);
 // app.use(httpLogger);
 
-app.use("/", user);
-app.use("/api/v1/blog", blog);
+app.use("/", auth);
+app.use("/api/v0/user", user);
+app.use("/api/v0/blog", blog);
 
 // Home Route
 app.get("/", (req, res) => {

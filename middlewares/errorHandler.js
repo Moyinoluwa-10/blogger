@@ -17,6 +17,7 @@ const errorHandler = (error, req, res, next) => {
 
   res.status(error.status || 400).json({
     status: false,
+    source: error.source || "Error handler middleware",
     message: error.message,
   });
 
