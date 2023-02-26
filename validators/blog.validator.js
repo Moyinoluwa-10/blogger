@@ -3,7 +3,7 @@ const Joi = require("joi");
 const blogAddSchema = Joi.object({
   title: Joi.string().max(255).required().trim(),
   description: Joi.string().max(255).optional().trim(),
-  body: Joi.string().max(255).required().trim(),
+  body: Joi.string().required().trim(),
   tags: Joi.string().max(255).optional().trim(),
   state: Joi.string().max(255).optional().trim(),
 });
@@ -11,7 +11,7 @@ const blogAddSchema = Joi.object({
 const updateBlogSchema = Joi.object({
   title: Joi.string().optional().trim(),
   description: Joi.string().optional().trim(),
-  body: Joi.string().max(255).optional().trim(),
+  body: Joi.string().optional().trim(),
   tags: Joi.string().max(255).optional().trim(),
 });
 

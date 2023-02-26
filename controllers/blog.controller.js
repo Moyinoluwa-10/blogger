@@ -6,51 +6,35 @@ const { readingTime } = require("../utils/readingTime");
 const getAllPublishedBlogs = async (req, res, next) => {
   try {
     let blogs;
-    const { page, author, title, tags, sortBy, order } = req.query;
+    const { page, author, title, tags, order_by, order } = req.query;
     const tag = tags ? tags : "";
     const titles = title ? title : "";
     const authors = author ? author : "";
-    const orders = order === "asc" ? 1 : -1;
-    if (sortBy === "read_count") {
-      blogs = await Blog.find({ state: "published" })
-        .find({ author: { $regex: `${authors}`, $options: "i" } })
-        .find({ title: { $regex: `${titles}`, $options: "i" } })
-        .find({ tags: { $regex: `${tag}`, $options: "i" } })
-        .sort({ read_count: `${orders}` })
-        .select({ title: 1 })
-        .populate("authorID", { username: 1 })
-        .skip(page > 0 ? page * 20 : 0)
-        .limit(20);
-    } else if (sortBy === "reading_time") {
-      blogs = await Blog.find({ state: "published" })
-        .find({ author: { $regex: `${authors}`, $options: "i" } })
-        .find({ title: { $regex: `${titles}`, $options: "i" } })
-        .find({ tags: { $regex: `${tag}`, $options: "i" } })
-        .sort({ reading_time: `${orders}` })
-        .select({ title: 1 })
-        .populate("authorID", { username: 1 })
-        .skip(page > 0 ? page * 20 : 0)
-        .limit(20);
-    } else if (sortBy === "createdAt") {
-      blogs = await Blog.find({ state: "published" })
-        .find({ author: { $regex: `${authors}`, $options: "i" } })
-        .find({ title: { $regex: `${titles}`, $options: "i" } })
-        .find({ tags: { $regex: `${tag}`, $options: "i" } })
-        .sort({ createdAt: `${orders}` })
-        .select({ title: 1 })
-        .populate("authorID", { username: 1 })
-        .skip(page > 0 ? page * 20 : 0)
-        .limit(20);
-    } else {
-      blogs = await Blog.find({ state: "published" })
-        .find({ author: { $regex: `${authors}`, $options: "i" } })
-        .find({ title: { $regex: `${titles}`, $options: "i" } })
-        .find({ tags: { $regex: `${tag}`, $options: "i" } })
-        .select({ title: 1 })
-        .populate("authorID", { username: 1 })
-        .skip(page > 0 ? page * 20 : 0)
-        .limit(20);
+
+    const sortQuery = {};
+
+    if (order_by) {
+      const sortAttributes = order_by.split(",");
+      for (const attribute of sortAttributes) {
+        if (order === "asc" && order_by) {
+          sortQuery[attribute] = 1;
+        } else if (order === "desc" && order_by) {
+          sortQuery[attribute] = -1;
+        } else {
+          sortQuery[attribute] = -1;
+        }
+      }
     }
+
+    blogs = await Blog.find({ state: "published" })
+      .find({ author: { $regex: `${authors}`, $options: "i" } })
+      .find({ title: { $regex: `${titles}`, $options: "i" } })
+      .find({ tags: { $regex: `${tag}`, $options: "i" } })
+      .sort(sortQuery)
+      .select({ title: 1 })
+      .populate("authorID", { username: 1 })
+      .skip(page > 0 ? page * 20 : 0)
+      .limit(20);
 
     return res.json({
       status: true,
@@ -185,7 +169,7 @@ const updateBlog = async (req, res, next) => {
       });
     }
 
-    if (req.user.id !== blog.authorID.id) {
+    if (req.user.id !== blog.authorID[0].id) {
       return res.status(401).json({
         status: false,
         message: "You are not authorized to update this blog",
@@ -225,7 +209,7 @@ const publishBlog = async (req, res, next) => {
       });
     }
 
-    if (req.user.id !== blog.authorID.id) {
+    if (req.user.id !== blog.authorID[0].id) {
       return res.status(401).json({
         status: false,
         message: "You are not authorized to publish this blog",
@@ -268,7 +252,7 @@ const deleteBlog = async (req, res, next) => {
       });
     }
 
-    if (req.user.id !== blog.authorID.id) {
+    if (req.user.id !== blog.authorID[0].id) {
       return res.status(401).json({
         status: false,
         message: "You are not authorized to delete this blog",
