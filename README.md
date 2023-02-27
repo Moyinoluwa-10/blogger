@@ -19,7 +19,7 @@ This is an API for a blogging app
     <a href="https://github.com/moyinoluwa-10/blogger#readme"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://api-shortener.vercel.app/">Demo</a>
+    <a href="https://bloggerrr.vercel.app/">Demo</a>
     ·
     <a href="https://github.com/moyinoluwa-10/blogger/issues">Report Bug</a>
     ·
