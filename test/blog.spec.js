@@ -68,27 +68,29 @@ describe("Blog Route", () => {
   it("should get a list of published blogs", async () => {
     const blogPost = await blogModel.create(fullPublishedBlog);
     const blogPost2 = await supertest(app)
-      .post("/api/v1/blog/")
+      .post("/api/v0/blog/")
       .set("content-type", "application/json")
       .set("Authorization", `bearer ${token}`)
       .send(publishedBlog);
 
-    const response = await supertest(app).get("/api/v1/blog/");
+    const response = await supertest(app).get("/api/v0/blog/");
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("status", true);
     expect(response.body).toHaveProperty("blogs");
   });
 
-  it("should get a particular published blog", async () => {
+  it("should get a particular draft blog", async () => {
     const blogPost = await supertest(app)
-      .post("/api/v1/blog/")
+      .post("/api/v0/blog/")
       .set("content-type", "application/json")
       .set("Authorization", `bearer ${token}`)
-      .send(publishedBlog);
+      .send(blog);
     blogID = blogPost.body.blog._id;
 
-    const response = await supertest(app).get(`/api/v1/blog/${blogID}`);
+    const response = await supertest(app)
+      .get(`/api/v0/blog/draft/${blogID}`)
+      .set("Authorization", `bearer ${token}`);
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("status", true);
@@ -97,14 +99,14 @@ describe("Blog Route", () => {
 
   it("should get a list of user blogs", async () => {
     const blogPost = await supertest(app)
-      .post("/api/v1/blog/")
+      .post("/api/v0/blog/")
       .set("content-type", "application/json")
       .set("Authorization", `bearer ${token}`)
       .send(publishedBlog);
     blogID = blogPost.body.blog._id;
 
     const response = await supertest(app)
-      .get(`/api/v1/blog/user/${userID}`)
+      .get(`/api/v0/blog/user/${userID}`)
       .set("Authorization", `bearer ${token}`);
 
     expect(response.status).toBe(200);
@@ -114,7 +116,7 @@ describe("Blog Route", () => {
 
   it("should create a blog", async () => {
     const response = await supertest(app)
-      .post("/api/v1/blog/")
+      .post("/api/v0/blog/")
       .set("content-type", "application/json")
       .set("Authorization", `bearer ${token}`)
       .send(blog);
@@ -135,14 +137,14 @@ describe("Blog Route", () => {
 
   it("should update a blog", async () => {
     const blogPost = await supertest(app)
-      .post("/api/v1/blog/")
+      .post("/api/v0/blog/")
       .set("content-type", "application/json")
       .set("Authorization", `bearer ${token}`)
       .send(blog);
     blogID = blogPost.body.blog._id;
 
     const response = await supertest(app)
-      .patch(`/api/v1/blog/${blogID}`)
+      .patch(`/api/v0/blog/${blogID}`)
       .set("content-type", "application/json")
       .set("Authorization", `Bearer ${token}`)
       .send({ title: "Rising Sun" });
@@ -159,14 +161,14 @@ describe("Blog Route", () => {
 
   it("should publish a blog", async () => {
     const blogPost = await supertest(app)
-      .post("/api/v1/blog/")
+      .post("/api/v0/blog/")
       .set("content-type", "application/json")
       .set("Authorization", `bearer ${token}`)
       .send(blog);
     blogID = blogPost.body.blog._id;
 
     const response = await supertest(app)
-      .patch(`/api/v1/blog/state/${blogID}`)
+      .patch(`/api/v0/blog/state/${blogID}`)
       .set("Authorization", `Bearer ${token}`)
       .set("content-type", "application/json");
 
@@ -183,14 +185,14 @@ describe("Blog Route", () => {
 
   it("should delete a blog", async () => {
     const blogPost = await supertest(app)
-      .post("/api/v1/blog/")
+      .post("/api/v0/blog/")
       .set("content-type", "application/json")
       .set("Authorization", `bearer ${token}`)
       .send(blog);
     blogID = blogPost.body.blog._id;
 
     const response = await supertest(app)
-      .delete(`/api/v1/blog/${blogID}`)
+      .delete(`/api/v0/blog/${blogID}`)
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);

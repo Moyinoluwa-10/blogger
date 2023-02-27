@@ -4,6 +4,7 @@ const {
   createBlog,
   getAllPublishedBlogs,
   getPublishedBlog,
+  getDraftBlog,
   updateBlog,
   publishBlog,
   deleteBlog,
@@ -21,6 +22,7 @@ blogRouter.get("/:id", getPublishedBlog);
 
 // requests that require authentication
 blogRouter.get("/user/:id", authenticateUser, getAListOfUserBlogs);
+blogRouter.get("/draft/:id", authenticateUser, getDraftBlog);
 blogRouter.post("/", authenticateUser, addBlogValidationMW, createBlog);
 blogRouter.patch("/:id", authenticateUser, updateBlogValidationMW, updateBlog);
 blogRouter.patch("/state/:id", authenticateUser, publishBlog);
