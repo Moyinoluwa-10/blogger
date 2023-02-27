@@ -1,4 +1,4 @@
-****# Blog App
+# Blog App
 This is an API for a blogging app
 
 ---
@@ -21,7 +21,7 @@ This is an API for a blogging app
 
 ---
 ## Base URL
-- [Live site](https://bloggerrr-app.herokuapp.com/)
+- [Live site](https://bloggerrr.vercel.app/)
 
 ## Postman Documentation
 - Click [here](https://documenter.getpostman.com/view/23165359/2s8YYFs4R8) to see the documentation
