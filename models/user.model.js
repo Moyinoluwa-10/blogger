@@ -47,16 +47,6 @@ const UserSchema = new Schema(
   { timestamps: true }
 );
 
-// Before saving the user information in the database, get the plain text password, hash it, and store it.
-UserSchema.pre("save", async function (next) {
-  const user = this;
-  // hash the password
-  const hash = await bcrypt.hash(this.password, 10);
-
-  this.password = hash;
-  next();
-});
-
 // Confirming that the user trying to log in has the correct details.
 UserSchema.methods.isValidPassword = async function (password) {
   const user = this;

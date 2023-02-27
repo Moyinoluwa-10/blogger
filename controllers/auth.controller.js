@@ -1,5 +1,6 @@
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const { JWT_SECRET, EXPIRY_TIME } = require("../config/config");
 
 const createUser = async (req, res, next) => {
@@ -23,6 +24,10 @@ const createUser = async (req, res, next) => {
         message: "User with this username already exists",
       });
     }
+
+    // Before saving the user information in the database, get the plain text password, hash it, and store it.
+    const hash = await bcrypt.hash(body.password, 10);
+    body.password = hash;
 
     const createdUser = await User.create(body);
 

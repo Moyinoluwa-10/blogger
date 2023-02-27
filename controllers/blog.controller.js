@@ -102,7 +102,7 @@ const createBlog = async (req, res, next) => {
     });
 
     const user = await User.findOne({ _id: req.user.id });
-    await user.updateOne({ $push: { blogs: createdBlog._id } });
+    await user.updateOne({ $push: { blogs: createdBlog } });
     await user.save();
 
     return res.status(201).json({
