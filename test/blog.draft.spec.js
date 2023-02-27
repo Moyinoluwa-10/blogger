@@ -23,26 +23,6 @@ describe("Blog Route", () => {
     tags: "money blog business",
   };
 
-  const publishedBlog = {
-    title: "How to plant a tulip",
-    description: "Learn how to plant a tulip",
-    body: "Get a pot, add soil, add water, add tulip",
-    state: "published",
-    tags: "plants tulip sun",
-  };
-
-  const fullPublishedBlog = {
-    title: "A nice tree",
-    description: "Learn about trees",
-    body: "What are trees? Trees are plants that have a trunk and branches. They have leaves and flowers. They grow from seeds. They are green. They are good for the environment. They are good for the air. They are good for the soil. They are good for the water. They are good for the animals. They are good for the people. They are good for the world.",
-    author: "abiodun badman",
-    authorID: "63ba234561c5d516d757a726",
-    state: "published",
-    tags: "trees",
-    reading_time: 2,
-    read_count: 4,
-  };
-
   beforeAll(() => connect());
 
   beforeEach(async () => {
@@ -65,31 +45,16 @@ describe("Blog Route", () => {
 
   afterAll(() => disconnect());
 
-  it("should get a list of published blogs", async () => {
-    const blogPost = await blogModel.create(fullPublishedBlog);
-    const blogPost2 = await supertest(app)
-      .post("/api/v0/blog/")
-      .set("content-type", "application/json")
-      .set("Authorization", `bearer ${token}`)
-      .send(publishedBlog);
-
-    const response = await supertest(app).get("/api/v0/blog/");
-
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("status", true);
-    expect(response.body).toHaveProperty("blogs");
-  });
-
-  it("should get a published blog", async () => {
+  it("should get a draft blog", async () => {
     const blogPost = await supertest(app)
       .post("/api/v0/blog/")
       .set("content-type", "application/json")
       .set("Authorization", `bearer ${token}`)
-      .send(publishedBlog);
+      .send(blog);
     blogID = blogPost.body.blog._id;
 
     const response = await supertest(app)
-      .get(`/api/v0/blog/${blogID}`)
+      .get(`/api/v0/blog/draft/${blogID}`)
       .set("Authorization", `bearer ${token}`);
 
     expect(response.status).toBe(200);
@@ -102,63 +67,74 @@ describe("Blog Route", () => {
     expect(response.body.blog).toHaveProperty("reading_time");
     expect(response.body.blog).toHaveProperty("author");
     expect(response.body.blog).toHaveProperty("createdAt");
-    expect(response.body.blog.state).toBe("published");
-    expect(response.body.blog.read_count).toBe(1);
-  });
-
-  it("should get a list of user blogs", async () => {
-    const blogPost = await supertest(app)
-      .post("/api/v0/blog/")
-      .set("content-type", "application/json")
-      .set("Authorization", `bearer ${token}`)
-      .send(publishedBlog);
-    blogID = blogPost.body.blog._id;
-
-    const response = await supertest(app)
-      .get(`/api/v0/blog/user/${userID}`)
-      .set("Authorization", `bearer ${token}`);
-
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("status", true);
-    expect(response.body).toHaveProperty("blogs");
-  });
-
-  it("should create a blog", async () => {
-    const response = await supertest(app)
-      .post("/api/v0/blog/")
-      .set("content-type", "application/json")
-      .set("Authorization", `bearer ${token}`)
-      .send(blog);
-
-    expect(response.status).toBe(201);
-    expect(response.body.status).toBe(true);
-    expect(response.body.message).toBe("Blog created successfully");
-    expect(response.body.blog).toHaveProperty("title");
-    expect(response.body.blog).toHaveProperty("description");
-    expect(response.body.blog).toHaveProperty("body");
-    expect(response.body.blog).toHaveProperty("tags");
-    expect(response.body.blog).toHaveProperty("reading_time");
-    expect(response.body.blog).toHaveProperty("author");
-    expect(response.body.blog).toHaveProperty("createdAt");
     expect(response.body.blog.state).toBe("draft");
     expect(response.body.blog.read_count).toBe(0);
   });
 
-  it("should delete a blog", async () => {
+  it("should update a draft blog", async () => {
     const blogPost = await supertest(app)
       .post("/api/v0/blog/")
       .set("content-type", "application/json")
       .set("Authorization", `bearer ${token}`)
-      .send(publishedBlog);
+      .send(blog);
     blogID = blogPost.body.blog._id;
 
     const response = await supertest(app)
-      .delete(`/api/v0/blog/${blogID}`)
+      .patch(`/api/v0/blog/draft/${blogID}`)
+      .set("content-type", "application/json")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ title: "Rising Sun" });
+
+    expect(response.status).toBe(200);
+    expect(response.body.status).toBe(true);
+    expect(response.body.message).toBe("Draft blog updated successfully");
+    expect(response.body.blog.title).toBe("Rising Sun");
+    expect(response.body.blog).toHaveProperty("body");
+    expect(response.body.blog).toHaveProperty("description");
+    expect(response.body.blog).toHaveProperty("tags");
+    expect(response.body.blog).toHaveProperty("author");
+    expect(response.body.blog.state).toBe("draft");
+  });
+
+  it("should publish a draft blog", async () => {
+    const blogPost = await supertest(app)
+      .post("/api/v0/blog/")
+      .set("content-type", "application/json")
+      .set("Authorization", `bearer ${token}`)
+      .send(blog);
+    blogID = blogPost.body.blog._id;
+
+    const response = await supertest(app)
+      .patch(`/api/v0/blog/draft/publish/${blogID}`)
+      .set("Authorization", `Bearer ${token}`)
+      .set("content-type", "application/json");
+
+    expect(response.status).toBe(200);
+    expect(response.body.status).toBe(true);
+    expect(response.body.message).toBe("Blog published successfully");
+    expect(response.body.blog).toHaveProperty("title");
+    expect(response.body.blog).toHaveProperty("body");
+    expect(response.body.blog).toHaveProperty("description");
+    expect(response.body.blog).toHaveProperty("tags");
+    expect(response.body.blog.state).toBe("published");
+    expect(response.body.blog).toHaveProperty("author");
+  });
+
+  it("should delete a draft blog", async () => {
+    const blogPost = await supertest(app)
+      .post("/api/v0/blog/")
+      .set("content-type", "application/json")
+      .set("Authorization", `bearer ${token}`)
+      .send(blog);
+    blogID = blogPost.body.blog._id;
+
+    const response = await supertest(app)
+      .delete(`/api/v0/blog/draft/${blogID}`)
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);
     expect(response.body.status).toBe(true);
-    expect(response.body.message).toBe("Blog deleted successfully");
+    expect(response.body.message).toBe("Draft blog deleted successfully");
   });
 });
 

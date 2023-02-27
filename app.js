@@ -10,6 +10,7 @@ const Sentry = require("./sentry");
 const auth = require("./routes/auth.routes");
 const user = require("./routes/user.routes");
 const blog = require("./routes/blog.routes");
+const draftBlog = require("./routes/blog.draft.routes");
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use(limiter);
 app.use("/", auth);
 app.use("/api/v0/user", user);
 app.use("/api/v0/blog", blog);
+app.use("/api/v0/blog/draft", draftBlog);
 
 // Home Route
 app.get("/", (req, res) => {
