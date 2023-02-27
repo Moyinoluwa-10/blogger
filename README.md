@@ -466,6 +466,13 @@ Success
 
 ...
 
+## Contact
+
+- Twitter - [@rotii_mii](https://twitter.com/rotii_mii)
+- Email - [moyinadelowo@gmail.com](mailto:moyinadelowo@gmail.com)
+
+---
+
 ## Contributor
 - Moyinoluwa Adelowo
 
