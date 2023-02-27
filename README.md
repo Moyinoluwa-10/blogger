@@ -1,4 +1,4 @@
-# Blog App
+****# Blog App
 This is an API for a blogging app
 
 ---
@@ -177,7 +177,7 @@ Success
 ```
 ---
 
-### Get a blog
+### Get a published blog
 
 - Route: /api/v0/blog/:id
 - Method: GET
@@ -198,6 +198,38 @@ Success
             "username": "biodun"
         },
         "state": "published",
+        "tags": "man lazy",
+        "read_count": 1,
+        "reading_time": 1,
+        "createdAt": "2022-11-05T18:11:39.919Z",
+        "updatedAt": "2022-11-05T18:36:51.013Z",
+        "__v": 0
+    }
+}
+```
+---
+
+### Get a draft blog
+
+- Route: /api/v0/blog/draft/:id
+- Method: GET
+- Responses
+
+Success
+```json
+{
+    "status": true,
+    "blog": {
+        "_id": "6366a75b1cd83ae556847ca9",
+        "title": "The lazy man",
+        "description": "Don'be lazy",
+        "body": "A heart touching story of ...",
+        "author": "abiodun badmann",
+        "authorID": {
+            "_id": "6366a3981cd83ae556847c9a",
+            "username": "biodun"
+        },
+        "state": "draft",
         "tags": "man lazy",
         "read_count": 1,
         "reading_time": 1,
@@ -290,9 +322,9 @@ Success
 ```
 ---
 
-### Update a blog
+### Update a draft blog
 
-- Route: /api/v0/blog/:id
+- Route: /api/v0/blog/draft/:id
 - Method: PATCH
 - Header:
     - Authorization: Bearer {token}
@@ -310,7 +342,7 @@ Success
 ```json
 {
     "status": true,
-    "message": "Blog updated successfully",
+    "message": "Draft blog updated successfully",
     "blog": {
         "_id": "6366a75b1cd83ae556847ca9",
         "title": "The lazy man",
@@ -321,7 +353,7 @@ Success
             "_id": "6366a3981cd83ae556847c9a",
             "username": "biodun"
         },
-        "state": "published",
+        "state": "draft",
         "tags": "man lazy",
         "read_count": 0,
         "reading_time": 1,
@@ -335,7 +367,7 @@ Success
 
 ### Publish a blog
 
-- Route: /api/v0/blog/state/:id
+- Route: /api/v0/blog/draft/publish/:id
 - Method: PATCH
 - Header:
     - Authorization: Bearer {token}
@@ -369,9 +401,9 @@ Success
 ```
 ---
 
-### Delete a blog
+### Delete a published blog
 
-- Route: /api/v0/blog
+- Route: /api/v0/blog/:id
 - Method: DELETE
 - Header:
     - Authorization: Bearer {token}
@@ -383,6 +415,25 @@ Success
 {
     "status": true,
     "message": "Blog deleted successfully"
+}
+```
+---
+
+
+### Delete a draft blog
+
+- Route: /api/v0/blog/draft/:id
+- Method: DELETE
+- Header:
+    - Authorization: Bearer {token}
+
+- Responses
+
+Success
+```json
+{
+    "status": true,
+    "message": "Draft blog deleted successfully"
 }
 ```
 ---
