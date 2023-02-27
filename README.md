@@ -14,22 +14,22 @@ This is an API for a blogging app
 8. Test application
 ---
 ## Setup
-- Install NodeJS, mongodb
+- Install NodeJS, MongoDB
 - pull this repo
-- update env with example.env
+- update env with [example.env](./example.env)
 - run `npm run start:dev`
 
 ---
 ## Base URL
-- [live site](https://bloggerrr-app.herokuapp.com/)
+- [Live site](https://bloggerrr-app.herokuapp.com/)
 
 ## Postman Documentation
 - Click [here](https://documenter.getpostman.com/view/23165359/2s8YYFs4R8) to see the documentation
 
 
 ## Models
-- UserModel
-- BlogModel
+- User Model
+- Blog Model
 
 ### User
 | field  |  data_type | constraints  |
@@ -57,8 +57,6 @@ This is an API for a blogging app
 |  tags |  string |  optional |
 |  read_count |  number |  required |
 |  reading_time |  number |  optional |
-|  createdAt |  date |  required |
-|  updateddAt |  date |  required |
 
 
 
@@ -67,44 +65,44 @@ This is an API for a blogging app
 
 ### Signup User
 
-- Route: /api/signup
+- Route: /signup
 - Method: POST
 - Body: 
-```
+```json
 {
   "email": "john@example.com",
   "password": "qwerty12",
   "first_name": "john",
   "last_name": "doe",
-  "username": 'johndoe",
-  "country": 'nigeria",
+  "username": "johndoe",
+  "country": "nigeria",
 }
 ```
 
 - Responses
 
 Success
-```
+```json
 {
-    status: true,
-    message: 'Signup successful',
-    user: {
+    "status": true,
+    "message": "Signup successful",
+    "user": {
           "email": "john@example.com",
           "password": "qwerty12",
           "first_name": "john",
           "last_name": "doe",
-          "username": 'johndoe",
-          "country": 'nigeria",
+          "username": "johndoe",
+          "country": "nigeria"
     }
 }
 ```
 ---
 ### Login User
 
-- Route: /api/login
+- Route: /login
 - Method: POST
 - Body: 
-```
+```json
 {
   "email": "john@example.com",
   "password": "qwerty12",
@@ -114,32 +112,31 @@ Success
 - Responses
 
 Success
-```
+```json
 {
-    message: "Login successful",
-    token: "sjlkafjkldsfjsdjkfdnvjkascdjdkcydcjdscdscbdshcduijckjncshbhdscndsbcsdcnsdbcjksdcnsdicbdncbdshcsdcdscnhdcdkscndsjkck"
+    "message": "Login successful",
+    "token": "sjlkafjkldsfjsdjkfdnvjkascdjdkcydcjdscdscbdshcduijckjncshbhdscndsbcsdcnsdbcjksdcnsdicbdncbdshcsdcdscnhdcdkscndsjkck"
 }
 ```
 
 ---
 ### Get a list of blogs
 
-- Route: /api/blog
+- Route: /api/v0/blog
 - Method: GET
-- Header:
-    - Authorization: Bearer {token}
 - Query params: 
     - page (default: 1)
     - per_page (default: 20)
-    - sortBy (read_count, reading_time, createdAt)
+    - order_by (read_count, reading_time, createdAt)
     - order (options: asc | desc, default: desc)
     - title 
     - author 
     - tags
+
 - Responses
 
 Success
-```
+```json
 {
     "status": true,
     "blogs": [
@@ -182,12 +179,12 @@ Success
 
 ### Get a blog
 
-- Route: /api/blog/:id
+- Route: /api/v0/blog/:id
 - Method: GET
 - Responses
 
 Success
-```
+```json
 {
     "status": true,
     "blog": {
@@ -214,7 +211,7 @@ Success
 
 ### Get a list of user blogs
 
-- Route: /api/blog/user/:id
+- Route: /api/v0/blog/user/:id
 - Method: GET
 - Header:
     - Authorization: Bearer {token}
@@ -226,7 +223,7 @@ Success
 - Responses
 
 Success
-```
+```json
 {
     "status": true,
     "blogs": [
@@ -253,16 +250,15 @@ Success
 
 ### Create a blog
 
-- Route: /api/blog
+- Route: /api/v0/blog
 - Method: POST
 - Header
     - Authorization: Bearer {token}
 - Body: 
-```
+```json
 {
-  {
   "title": "The hare and the tortoise",
-  "description": "Madira"
+  "description": "Madira",
   "body": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Rerum numquam repellendus dicta eligendi consequatur, consectetur sit libero quaerat apsum dolor sit amet consectetur, adipisicing elit. Minus  sint et nihil unde quaerat. Omnis molestiae perferendis repellat praesentium. Impedit ullam similique, libero a minima fugit vero doloremque esse, ad nulla consectetur cupiditate sint nobis quos et tempora possimus vitae, velit autem atque fuga. Vel ",
   "tags": "animal tortoise hare"
 }
@@ -271,7 +267,7 @@ Success
 - Responses
 
 Success
-```
+```json
 {
     "status": true,
     "message": "Blog created successfully",
@@ -296,13 +292,13 @@ Success
 
 ### Update a blog
 
-- Route: /api/blog/:id
+- Route: /api/v0/blog/:id
 - Method: PATCH
 - Header:
     - Authorization: Bearer {token}
   
 - Body: 
-```
+```json
 {
   "description" : "Don'be lazy",
   "body": "A heart touching story of ..."
@@ -311,10 +307,10 @@ Success
 - Responses
 
 Success
-```
+```json
 {
     "status": true,
-    "message": "Blog updated successfully"
+    "message": "Blog updated successfully",
     "blog": {
         "_id": "6366a75b1cd83ae556847ca9",
         "title": "The lazy man",
@@ -339,7 +335,7 @@ Success
 
 ### Publish a blog
 
-- Route: /api/blog/state/:id
+- Route: /api/v0/blog/state/:id
 - Method: PATCH
 - Header:
     - Authorization: Bearer {token}
@@ -347,7 +343,7 @@ Success
 - Responses
 
 Success
-```
+```json
 {
     "status": true,
     "message": "Blog published successfully",
@@ -375,7 +371,7 @@ Success
 
 ### Delete a blog
 
-- Route: /api/blog
+- Route: /api/v0/blog
 - Method: DELETE
 - Header:
     - Authorization: Bearer {token}
@@ -383,7 +379,7 @@ Success
 - Responses
 
 Success
-```
+```json
 {
     "status": true,
     "message": "Blog deleted successfully"
