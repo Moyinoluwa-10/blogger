@@ -462,9 +462,8 @@ Success
     "message": "Draft blog deleted successfully"
 }
 ```
----
 
-...
+---
 
 ## Contact
 
