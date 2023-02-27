@@ -3,6 +3,32 @@ This is an API for a blogging app
 
 ---
 
+<!-- Project Shields -->
+<div align="center">
+  
+  [![Contributors][contributors-shield]][contributors-url]
+  [![Forks][forks-shield]][forks-url]
+  [![Stargazers][stars-shield]][stars-url]
+  [![Issues][issues-shield]][issues-url]
+  [![MIT License][license-shield]][license-url]
+  [![Twitter][twitter-shield]][twitter-url]
+</div>
+
+<div>
+  <p align="center">
+    <a href="https://github.com/moyinoluwa-10/blogger#readme"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://api-shortener.vercel.app/">Demo</a>
+    ·
+    <a href="https://github.com/moyinoluwa-10/blogger/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/moyinoluwa-10/blogger/issues">Request Feature</a>
+  </p>
+</div>
+
+---
+
 ## Requirements
 1. The user should be able to register 
 2. The user should be able to log in with Passport using JWT
@@ -442,3 +468,23 @@ Success
 
 ## Contributor
 - Moyinoluwa Adelowo
+
+
+<!-- Markdown Links & Images -->
+
+[contributors-shield]: https://img.shields.io/github/contributors/moyinoluwa-10/blogger.svg?style=for-the-badge
+[contributors-url]: https://github.com/moyinoluwa-10/blogger/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/moyinoluwa-10/blogger.svg?style=for-the-badge
+[forks-url]: https://github.com/moyinoluwa-10/blogger/network/members
+[stars-shield]: https://img.shields.io/github/stars/moyinoluwa-10/blogger.svg?style=for-the-badge
+[stars-url]: https://github.com/moyinoluwa-10/blogger/stargazers
+[issues-shield]: https://img.shields.io/github/issues/moyinoluwa-10/blogger.svg?style=for-the-badge
+[issues-url]: https://github.com/moyinoluwa-10/blogger/issues
+[license-shield]: https://img.shields.io/github/license/moyinoluwa-10/blogger.svg?style=for-the-badge
+[license-url]: https://github.com/moyinoluwa-10/blogger/blob/main/LICENSE.md
+[twitter-shield]: https://img.shields.io/badge/-@rotii_mii-1ca0f1?style=for-the-badge&logo=twitter&logoColor=white&link=https://twitter.com/rotii_mii
+[twitter-url]: https://twitter.com/rotii_mii
+[javascript]: https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1C
+[node]: https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white
+[express]: https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB
+[mongodb]: https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white
